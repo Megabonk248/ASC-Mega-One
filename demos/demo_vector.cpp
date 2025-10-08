@@ -4,7 +4,6 @@
 
 namespace bla = ASC_bla;
 
-
 int main()
 {
   size_t n = 5;
