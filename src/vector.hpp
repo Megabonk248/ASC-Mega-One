@@ -120,31 +120,12 @@ namespace ASC_bla
   template <typename ...Args>
   std::ostream & operator<< (std::ostream & ost, const VectorView<Args...> & v)
   {
-    Vector<T> sum(a.Size());
-    for (size_t i = 0; i < a.Size(); i++)
-      sum(i) = a(i)+b(i);
-    return sum;
-  }
-
-  template <typename T>
-  Vector<T> operator- (const Vector<T> & a, const Vector<T> & b)
-  {
-    Vector<T> diff(a.Size());
-    for (size_t i = 0; i < a.Size(); i++)
-      diff(i) = a(i)-b(i);
-    return diff;
-  }
-  
-  template <typename T>
-  std::ostream & operator<< (std::ostream & ost, const Vector<T> & v)
-  {
-    if (v.Size() > 0)
+    if (v.size() > 0)
       ost << v(0);
     for (size_t i = 1; i < v.size(); i++)
       ost << ", " << v(i);
     return ost;
-  }
-  
+  } 
 }
 
 #endif
