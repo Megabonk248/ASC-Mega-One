@@ -81,17 +81,17 @@ namespace ASC_bla
       : MatrixView<T> (width, height, new T[width * height]) { ; }
     
     Matrix (const Matrix & m)
-      : Matrix(m.Width(), m.Height())
+      : Matrix(m.width(), m.height())
     {
       *this = m;
     }
 
     Matrix (Matrix && m)
-      : MatrixView<T> (0, nullptr)
+      : MatrixView<T> (0, 0, nullptr)
     {
-      std::swap(m_width, m.full_width());
-      std::swap(m_height, m.full_height());
-      std::swap(m_data, m.data());
+      std::swap(m_width, m.m_width);
+      std::swap(m_height, m.m_height);
+      std::swap(m_data, m.m_data);
     }
 
     ~Matrix () { delete [] m_data; }
@@ -99,11 +99,11 @@ namespace ASC_bla
     using BASE::operator=;
     Matrix & operator=(const Matrix & m2)
     {
-      assert (this.width() == m2.width());
-      assert (this.height() == m2.height());
-      for (size_t x = 0; x < this.width(); x++) {
-        for (size_t y = 0; y < this.height(); y++) {
-            this(x,y) = m2(x,y);   
+      assert (this->width() == m2.width());
+      assert (this->height() == m2.height());
+      for (size_t x = 0; x < this->width(); x++) {
+        for (size_t y = 0; y < this->height(); y++) {
+            (*this)(x,y) = m2(x,y);   
         }
       }
       return *this;
@@ -111,10 +111,10 @@ namespace ASC_bla
 
     Matrix & operator= (Matrix && m2)
     {
-      assert (this.width() == m2.width());
-      assert (this.height() == m2.height());
-      for (size_t x = 0; x < this.width(); x++) {
-        for (size_t y = 0; y < this.height(); y++) {
+      assert (this->width() == m2.width());
+      assert (this->height() == m2.height());
+      for (size_t x = 0; x < this->width(); x++) {
+        for (size_t y = 0; y < this->height(); y++) {
             this(x,y) = m2(x,y);   
         }
       }
@@ -123,10 +123,10 @@ namespace ASC_bla
     
     Matrix<T> Inverse() const
       {
-        if (width != height)
+        if (m_width != m_height)
           throw std::runtime_error("Matrix muss quadratisch sein, um invertiert zu werden.");
 
-        size_t n = width;
+        size_t n = m_width;
         Matrix<T> A(*this);
         Matrix<T> I(n, n);
 
