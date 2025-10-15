@@ -1,5 +1,5 @@
-#ifndef FILE_EXPRESSION
-#define FILE_EXPRESSION
+#ifndef FILE_EXPRESSION_VEC
+#define FILE_EXPRESSION_VEC
 
 #include <cassert>
 
