@@ -24,4 +24,5 @@ int main()
 
   std::cout << "A:\n" << A;
   std::cout << "B:\n" << B;
+  std::cout << "Inverse von A:\n" << A.Inverse();
 }
