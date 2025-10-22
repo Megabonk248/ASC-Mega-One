@@ -1,10 +1,11 @@
 # search for libraray like bla.cpython-312-darwin.so in the build directory:
-# import sys
-# sys.path.append('/Users/joachim/texjs/lva/ws2324/ScientificComputing/ASC-bla/build')
-# from bla import Vector
+import sys
+sys.path.append('C:/Users/attila/Documents/vsc/ASC-Mega-One/build/Debug')
+from bla import Vector
+from bla import Matrix
 
 # import from the installed ASCsoft package:
-from ASCsoft.bla import Vector
+#from ASCsoft.bla import Vector
 
 x = Vector(3)
 y = Vector(3)
@@ -28,5 +29,13 @@ print (x)
 x[0:10:2] = 3
 print (x)
 
+A = Matrix(2,2)
+A[(slice(0,2), slice(0,2))] = 1
+
+B = Matrix(2,2)
+B[(slice(0,2), slice(0,2))] = -2
+B[(0,1)] = 3
+
+print(A + B)
 
 

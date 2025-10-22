@@ -34,10 +34,10 @@ namespace ASC_bla
     template <typename TB>
     MatrixView & operator= (const MatrixExpr<TB> & m2)
     {
-      assert (this.width() == m2.width());
-      assert (this.height() == m2.height());
-      for (size_t x = 0; x < this.width(); x++) {
-        for (size_t y = 0; y < this.height(); y++) {
+      assert (this->width() == m2.width());
+      assert (this->height() == m2.height());
+      for (size_t x = 0; x < this->width(); x++) {
+        for (size_t y = 0; y < this->height(); y++) {
           this(x, y) = m2(x, y);
         }
       }
@@ -47,8 +47,8 @@ namespace ASC_bla
     MatrixView & operator= (T scal)
     {
 
-      for (size_t x = 0; x < this.width(); x++) {
-        for (size_t y = 0; y < this.height(); y++) {
+      for (size_t x = 0; x < this->width(); x++) {
+        for (size_t y = 0; y < this->height(); y++) {
           this(x, y) = scal;
         }
       }
@@ -184,9 +184,9 @@ namespace ASC_bla
   template <typename T>
   Matrix<T> operator+ (const Matrix<T> & a, const Matrix<T> & b)
   {
-    Matrix<T> sum(a.Size());
-    for (size_t x = 0; x < a.Width(); x++) {
-        for (size_t y = 0; y < a.Height(); y++) {
+    Matrix<T> sum(a.width(), a.height());
+    for (size_t x = 0; x < a.width(); x++) {
+        for (size_t y = 0; y < a.height(); y++) {
             sum(x,y) = a(x,y)+b(x,y);
         }
     }
