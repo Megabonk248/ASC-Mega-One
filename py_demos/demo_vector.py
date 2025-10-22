@@ -1,6 +1,6 @@
 # search for libraray like bla.cpython-312-darwin.so in the build directory:
 import sys
-sys.path.append('C:/Users/attila/Documents/vsc/ASC-Mega-One/build/Debug')
+sys.path.append('../build/Debug')
 from bla import Vector
 from bla import Matrix
 
