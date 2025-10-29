@@ -62,7 +62,7 @@ namespace ASC_bla
   // ***************** Output operator *****************
 
   template <typename T>
-  std::ostream & operator<< (std::ostream & ost, const MatrixExpr<T> & v)
+  std::ostream & operator<< (std::ostream & ost, const MatrixExpr<T> &m)
   {
     for (size_t y = 0; y < m.height(); y++) {
         for (size_t x = 0; x < m.width(); x++) {

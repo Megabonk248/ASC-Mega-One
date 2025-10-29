@@ -24,5 +24,11 @@ int main()
 
   std::cout << "A:\n" << A;
   std::cout << "B:\n" << B;
+  std::cout << "A+B:\n" << (A+B);
+  std::cout << "2*A:\n" << (2*A);
+
+  A = A+2*B;
+  std::cout << "A=A+2B:\n" << A;
+
   std::cout << "Inverse von A:\n" << A.Inverse();
 }

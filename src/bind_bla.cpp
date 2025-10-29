@@ -89,12 +89,17 @@ PYBIND11_MODULE(bla, m) {
           }
         }
       })
+
+      
+      .def_property_readonly("shape", [](const Matrix<double>& self) {
+           return std::tuple(self.height(), self.width());
+      })
       
       .def("__add__", [](Matrix<double> & self, Matrix<double> & other)
       { return Matrix<double> (self+other); })
 
-      /*.def("__rmul__", [](Matrix<double> & self, double scal)
-      { return Matrix<double> (scal*self); })*/
+      .def("__rmul__", [](Matrix<double> & self, double scal)
+      { return Matrix<double> (scal*self); })
       
       .def("__str__", [](const Matrix<double> & self)
       {

@@ -38,7 +38,7 @@ namespace ASC_bla
       assert (this->height() == m2.height());
       for (size_t x = 0; x < this->width(); x++) {
         for (size_t y = 0; y < this->height(); y++) {
-          this(x, y) = m2(x, y);
+          (*this)(x, y) = m2(x, y);
         }
       }
       return *this;
@@ -92,6 +92,13 @@ namespace ASC_bla
       std::swap(m_width, m.m_width);
       std::swap(m_height, m.m_height);
       std::swap(m_data, m.m_data);
+    }
+
+    template <typename TB>
+    Matrix (const MatrixExpr<TB> & m)
+      : Matrix(m.width(), m.height())
+    {
+      *this = m;
     }
 
     ~Matrix () { delete [] m_data; }
@@ -181,7 +188,7 @@ namespace ASC_bla
   };
 
 
-  template <typename T>
+  /*template <typename T>
   Matrix<T> operator+ (const Matrix<T> & a, const Matrix<T> & b)
   {
     Matrix<T> sum(a.width(), a.height());
@@ -191,7 +198,7 @@ namespace ASC_bla
         }
     }
     return sum;
-  }
+  }*/
 
   template <typename T>
   Matrix<T> operator- (const Matrix<T> & a, const Matrix<T> & b)
