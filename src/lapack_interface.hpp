@@ -5,6 +5,7 @@
 #include <string>
 
 #include "vector.hpp"
+#include "matrix.hpp"
 
 
 
@@ -60,42 +61,33 @@ namespace ASC_bla
   // doublereal *b, integer *ldb, doublereal *beta, doublereal *c__, 
   // integer *ldc);
 
-  /*  
+ 
   // c = a*b
-  template <ORDERING OA, ORDERING OB>
-  void multMatMatLapack (MatrixView<double, OA> a,
-                         MatrixView<double, OB> b,
-                         MatrixView<double, ColMajor> c)
+  void multMatMatLapack (MatrixView<double> a,
+                         MatrixView<double> b,
+                         MatrixView<double> c)
   {
-    char transa_ = (OA == ColMajor) ? 'N' : 'T';
-    char transb_ = (OB == ColMajor) ? 'N' : 'T'; 
-  
-    integer n = c.rows();
-    integer m = c.cols();
-    integer k = a.dist();
+    integer n = c.width();
+    integer m = c.height();
+    integer k = a.width();
   
     double alpha = 1.0;
     double beta = 0;
-    integer lda = std::max(a.dist(), 1ul);
-    integer ldb = std::max(b.dist(), 1ul);
-    integer ldc = std::max(c.dist(), 1ul);
+    integer lda = std::max((unsigned long)m, 1ul);
+    integer ldb = std::max((unsigned long)k, 1ul);
+    integer ldc = std::max((unsigned long)m, 1ul);
 
+    char transa_ ='N';
+    char transb_ ='N';
+    std::cout << "help" << ldb;
     int err =
-      dgemm_ (&transa_, &transb_, &n, &m, &k, &alpha, 
+      dgemm_ (&transa_, &transb_, &m, &n, &k, &alpha, 
               a.data(), &lda, b.data(), &ldb, &beta, c.data(), &ldc);
-
+    std::cout << "help2: " << err;
     if (err != 0)
       throw std::runtime_error(std::string("MultMatMat got error "+std::to_string(err)));
+    std::cout << "help3?";
   }
-                       
-  template <ORDERING OA, ORDERING OB>
-  int multMatMatLapack (MatrixView<double, OA> a,
-                        MatrixView<double, OB> b,
-                        MatrixView<double, RowMajor> c)
-  {
-    multMatMatLapack (trans(b), trans(a), trans(c));
-  }
-  */
 
   
 
