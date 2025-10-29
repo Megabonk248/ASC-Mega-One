@@ -26,6 +26,7 @@ int main()
   std::cout << "B:\n" << B;
   std::cout << "A+B:\n" << (A+B);
   std::cout << "2*A:\n" << (2*A);
+  std::cout << "B*A:\n" << (B*A);
 
   A = A+2*B;
   std::cout << "A=A+2B:\n" << A;

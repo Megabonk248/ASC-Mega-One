@@ -100,6 +100,9 @@ PYBIND11_MODULE(bla, m) {
 
       .def("__rmul__", [](Matrix<double> & self, double scal)
       { return Matrix<double> (scal*self); })
+
+      .def("__mul__", [](Matrix<double> & self, Matrix<double> & other)
+      { return Matrix<double> (self*other); })
       
       .def("__str__", [](const Matrix<double> & self)
       {

@@ -59,6 +59,35 @@ namespace ASC_bla
     return ScaleMatrixExpr(scal, v.derived());
   }
 
+
+// ***************** Scaling a matrix *****************
+  
+  template <typename TA, typename TB>
+  class MultiplyMatrixExpr : public MatrixExpr<MultiplyMatrixExpr<TA,TB>>
+  {
+    TA a;
+    TB b;
+  public:
+    MultiplyMatrixExpr (TA _a, TB _b) : a(_a), b(_b) { }
+    auto operator() (size_t x, size_t y) const { 
+      auto s = 0;
+      for (size_t i = 0; i < a.width(); i++) {
+        s += a(x, i) * b(i, y);
+      }
+      return s;
+     }
+    size_t width() const { return a.width(); }      
+    size_t height() const { return a.height(); }      
+  };
+  
+  template <typename TA, typename TB>
+  auto operator* (const MatrixExpr<TA> & a, const MatrixExpr<TB> & b)
+  {
+    assert (a.width() == b.width());
+    assert (a.height() == b.height());
+    return MultiplyMatrixExpr(a.derived(), b.derived());
+  }
+
   // ***************** Output operator *****************
 
   template <typename T>

@@ -1,5 +1,9 @@
-from ngsolve import *
 from time import time
+
+import sys
+sys.path.append('../build/Debug')
+from bla import Vector
+from bla import Matrix
 
 n = 1
 

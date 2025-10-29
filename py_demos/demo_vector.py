@@ -36,6 +36,6 @@ B = Matrix(2,2)
 B[(slice(0,2), slice(0,2))] = -2
 B[(0,1)] = 3
 
-print(A + B)
+print(A + 2 * B)
 
 
