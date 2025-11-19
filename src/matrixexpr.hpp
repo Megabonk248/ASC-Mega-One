@@ -60,7 +60,7 @@ namespace ASC_bla
   }
 
 
-// ***************** Scaling a matrix *****************
+// ***************** Multiplying matrices *****************
   
   template <typename TA, typename TB>
   class MultiplyMatrixExpr : public MatrixExpr<MultiplyMatrixExpr<TA,TB>>
