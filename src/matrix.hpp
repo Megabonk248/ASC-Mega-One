@@ -225,11 +225,13 @@ namespace ASC_bla
     constexpr size_t H=4;
     constexpr size_t W=12;
 
-    for (size_t j = 0; j+W <= C.width(); j += W) 
+    /*for (size_t j = 0; j+W <= C.width(); j += W) 
       for (size_t i = 0; i+H <= C.height(); i += H)
         AddMatMatKernel<H,W> (A.width(), &A(i,0), A.dist(),
-                            &B(0,j), B.dist(), &C(i,j), C.dist());
+                            &B(0,j), B.dist(), &C(i,j), C.dist());*/
     // leftover rows and cols
+
+    std::cout << "aargh";
   }
 
 
