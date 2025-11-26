@@ -5,38 +5,39 @@
 #include <algorithm>
 
 #include "matrixexpr.hpp"
+#include "taskmanager.hpp"
 
 namespace ASC_bla
 {
 
-  template <typename T, typename TDISTX = std::integral_constant<size_t,1>, typename TDISTY = std::integral_constant<size_t,1>, typename TOFFX = std::integral_constant<size_t,0>, typename TOFFY = std::integral_constant<size_t,0>, typename TWIDTH = std::integral_constant<size_t,SIZE_MAX>, typename THEIGHT = std::integral_constant<size_t,SIZE_MAX> >
-  class MatrixView : public MatrixExpr<MatrixView<T,TDISTX,TDISTY>>
+  template <typename T>
+  class MatrixView : public MatrixExpr<MatrixView<T>>
   {
   protected:
     T * m_data;
     size_t m_width;
     size_t m_height;
-    TWIDTH m_window_width;
-    THEIGHT m_window_height;
-    TDISTX m_dist_x;
-    TDISTY m_dist_y;
-    TOFFX m_offset_x;
-    TOFFY m_offset_y;
+    size_t m_window_width = this->m_width;
+    size_t m_window_height = this->m_height;
+    size_t m_dist_x = 1;
+    size_t m_dist_y = 1;
+    size_t m_offset_x = 0;
+    size_t m_offset_y = 0;
   public:
     MatrixView() = default;
     MatrixView(const MatrixView &) = default;
     
     template <typename TDISTX2, typename TDISTY2>
-    MatrixView (const MatrixView<T, TDISTX2, TDISTY2> & m2)
+    MatrixView (const MatrixView<T> & m2)
       : m_data(m2.data()), m_width(m2.full_width()), m_width(m2.full_height()), m_dist_x(m2.dist_x()), m_dist_y(m2.dist_y()), m_offset_x(m2.offset_x()), m_offset_y(m2.offset_y()), m_window_width(m2.window_width()), m_window_height(m2.window_height()) { };
     
     MatrixView (size_t width, size_t height, T * data)
       : m_data(data), m_width(width), m_height(height) { }
     
-    MatrixView (size_t width, size_t height, TDISTX dist_x, TDISTY dist_y , T * data)
+    MatrixView (size_t width, size_t height, size_t dist_x, size_t dist_y , T * data)
       : m_data(data), m_width(width), m_height(height), m_dist_x(dist_x), m_dist_y(dist_y) { }
     
-    MatrixView (size_t width, size_t height, TWIDTH window_width, THEIGHT window_height, TOFFX offset_x, TOFFY offset_y, T * data)
+    MatrixView (size_t width, size_t height, size_t window_width, size_t window_height, size_t offset_x, size_t offset_y, T * data)
       : m_data(data), m_width(width), m_height(height), m_window_width(width), m_window_height(height), m_offset_x(offset_x), m_offset_y(offset_y) { }
     
     template <typename TB>
@@ -68,12 +69,12 @@ namespace ASC_bla
     size_t full_height() const { return m_height; }
     size_t width() const { return std::min(m_width, (size_t) m_window_width) / m_dist_x; }
     size_t height() const { return std::min(m_height, (size_t) m_window_height) / m_dist_y; }
-    auto dist_x() const { return m_dist_x; }
-    auto dist_y() const { return m_dist_y; }
-    auto offset_x() const { return m_offset_x; }
-    auto offset_y() const { return m_offset_y; }
-    auto window_width() const { return m_window_width; }
-    auto window_height() const { return m_window_height; }
+    size_t dist_x() const { return m_dist_x; }
+    size_t dist_y() const { return m_dist_y; }
+    size_t offset_x() const { return m_offset_x; }
+    size_t offset_y() const { return m_offset_y; }
+    size_t window_width() const { return m_window_width; }
+    size_t window_height() const { return m_window_height; }
     
     T & operator()(size_t x, size_t y) { return m_data[m_dist_x * (x + m_offset_x) * m_height + m_dist_y * (y + m_offset_y)]; }
     const T & operator()(size_t x, size_t y) const { return m_data[m_dist_x * (x + m_offset_x) * m_height + m_dist_y * (y + m_offset_y)]; }
@@ -201,23 +202,41 @@ namespace ASC_bla
 
   template<typename T>
   void addMatMat (MatrixView<T> A, MatrixView<T> B, MatrixView<T> C) {
-  constexpr size_t BH=96;
-  constexpr size_t BW=96;
-  alignas (64) double memBA[BH*BW];
-  for (size_t i1 = 0; i1 < A.height(); i1 += BH)
-    for (size_t j1 = 0; j1 < A.width(); j1 += BW) {
-      size_t i2 = min(A.height(), i1+BH);
-      size_t j2 = min(A.width(), j1+BW);
+    constexpr size_t BH=96;
+    constexpr size_t BW=96;
+    size_t x_count = (A.width() + BW - 1) / BW;
+    size_t y_count = (A.height() + BH - 1) / BH;
+
+    ASC_HPC::StartWorkers(2);
+    
+    ASC_HPC::RunParallel(x_count * y_count, [y_count, A, B, C] (int index, int nr) {
+      constexpr size_t BH=96;
+      constexpr size_t BW=96;
+      alignas (64) double memBA[BH*BW];
+      
+      size_t x = (size_t) index % y_count;
+      size_t y = (size_t) index / y_count;
+
+      size_t i1 = y * BH;
+      size_t j1 = x * BW;
+
+      size_t i2 = std::min(A.height(), i1+BH);
+      size_t j2 = std::min(A.width(), j1+BW);
 
       size_t w = j2-j1;
       size_t h = i2-i1;
-      MatrixView<T> Ablock(w, h,  memBA);
+
+      MatrixView<T> Ablock(w, h, memBA);
       MatrixView<T> ASub(A.full_width(), A.full_height(), w, h, j1, i1, A.data());
       MatrixView<T> BSub(B.full_width(), B.full_height(), B.window_width(), w, B.offset_x(), j1, B.data());
       MatrixView<T> CSub(C.full_width(), C.full_height(), C.window_width(), w, C.offset_x(), j1, C.data());
       Ablock = ASub;
+
+
       addMatMat2(Ablock, BSub, CSub);
-    }
+    });
+
+    ASC_HPC::StopWorkers();
   }
 
   template<typename T>
@@ -231,7 +250,7 @@ namespace ASC_bla
                             &B(0,j), B.dist(), &C(i,j), C.dist());*/
     // leftover rows and cols
 
-    std::cout << "aargh";
+    std::cout << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaargh";
   }
 
 
